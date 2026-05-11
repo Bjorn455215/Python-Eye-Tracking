@@ -17,6 +17,8 @@ pip install opencv-python cvzone mediapipe
 ```
 
 ## 成果
+https://github.com/user-attachments/assets/12cedf83-5f0e-4c22-a25c-66311a1d9cf8
+
 
 ## 參考資料
 https://github.com/Tech-Watt/YOUTUBE-TUTORIAL-CODES/blob/main/Eye%20detection.py
