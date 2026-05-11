@@ -1,0 +1,62 @@
+import cv2 # opencv-contrib-python 4.13.0.92 、opencv-python 4.8.0.74
+from cvzone.PoseModule import PoseDetector # cvzone 1.6.1
+
+cap = cv2.VideoCapture(0)
+pd = PoseDetector() # # 初始化姿態偵測器
+
+while 1:
+    ret,img = cap.read() # 讀取攝影機每一幀影像
+    if not ret:
+        # print("無法讀取攝影機影像，請檢查設備連接。")
+        break  # 離開迴圈
+    
+    # 進行水平翻轉 (1 代表水平翻轉，0 代表垂直，-1 代表兩者皆有)
+    img = cv2.flip(img, 1)
+
+    # 接著進行偵測
+    pd.findPose(img, draw=0)
+    lmlist, bbox = pd.findPosition(img, draw=0)
+
+    if len(lmlist)!= 0: # 確保畫面中有偵測到人，否則存取清單會導致程式崩潰。
+
+        # 取得關鍵點座標
+        nose = lmlist[0][0:2]    # 鼻子
+        lefter = lmlist[7][0:2]  # 左耳
+        righter = lmlist[8][0:2] # 右耳
+        lefteye = lmlist[2][0:2] # 左眼
+        righteye = lmlist[5][0:2]# 右眼
+
+        # 判斷頭部轉向 (比較鼻子與兩耳的 X 軸差值)
+        # 翻轉後：左耳在右邊(座標大)，右耳在左邊(座標小)
+        dist_n_le = abs(nose[0] - lefter[0])
+        dist_n_re = abs(nose[0] - righter[0])
+
+        if dist_n_le < dist_n_re - 20: # -20 防止頭部輕微晃動時就判定往哪邊轉
+            head_dir = "Turning Right" # 因為鏡像翻轉 所以要反過來 才會頭往右轉時顯示往右
+        elif dist_n_re < dist_n_le - 20:
+            head_dir = "Turning Left"
+        else:
+            head_dir = "Facing Forward"
+
+        # 判斷距離 (計算兩眼間的像素距離)
+        # 使用歐幾里得距離公式 (x1-x2)^2 + (y1-y2)^2 的開根號
+        eye_dist = int(((lefteye[0] - righteye[0])**2 + (lefteye[1] - righteye[1])**2)**0.5)
+        
+        # 將像素距離映射為自定義距離感 (數值越大代表越近)
+        distance_text = f"Distance Scale: {eye_dist}"
+
+        # 繪製資訊到畫面上
+        cv2.putText(img, head_dir, (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+        cv2.putText(img, distance_text, (50, 100), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 0), 2)
+        
+        # 畫出眼睛紅點
+        dynamic_radius = int(eye_dist / 5) # 距離越近(值越大)，紅點就跟著變大
+        cv2.circle(img, (lefteye[0], lefteye[1]), dynamic_radius, (0, 0, 255), -1)
+        cv2.circle(img, (righteye[0], righteye[1]), dynamic_radius, (0, 0, 255), -1)
+
+    cv2.imshow('frame', img)
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
+
+cap.release()
+cv2.destroyAllWindows()
