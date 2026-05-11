@@ -11,10 +11,12 @@
 
 ## 需求
 本專案使用 **Python 3.9.7 版**(因為 mediapipe 在 3.10+ 以上無法執行)，執行以下指令安裝必要套件：
-
-```bash
-pip install opencv-python cvzone mediapipe
-```
+| 套件名稱 (Library) | 建議版本 (Version) | 說明 (Description) |
+| :--- | :--- | :--- |
+| **opencv-python** | `4.8.0.74` | 基礎影像處理庫 |
+| **opencv-contrib-python** | `4.13.0.92` | 包含擴展功能的 OpenCV 版本 |
+| **mediapipe** | `0.10.9` | Google 開發的機器學習視覺推論框架 |
+| **cvzone** | `1.6.1` | 簡化 Mediapipe 操作的封裝工具庫 |
 
 ## 成果
 https://github.com/user-attachments/assets/12cedf83-5f0e-4c22-a25c-66311a1d9cf8
