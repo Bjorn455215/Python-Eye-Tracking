@@ -1,5 +1,5 @@
-import cv2 # opencv-contrib-python 4.13.0.92 、opencv-python 4.8.0.74
-from cvzone.PoseModule import PoseDetector # cvzone 1.6.1
+import cv2 
+from cvzone.PoseModule import PoseDetector 
 
 cap = cv2.VideoCapture(0)
 pd = PoseDetector() # # 初始化姿態偵測器
